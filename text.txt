@@ -1,0 +1,282 @@
+-- Services
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- URLs de Key System
+local LINK_TO_COPY = "https://lootdest.com/s?LpFhhvTS&did=9"
+local VALIDATE_URL = "https://v0-key-generation-website-flax.vercel.app/api/validate?key="
+
+-- Arquivo para armazenar a Key
+local KEY_FILE = "xsilv7gptkey.json"
+
+-- Função para salvar a Key localmente
+local function saveKey(key)
+    if writefile then
+        writefile(KEY_FILE, key)
+    end
+end
+
+-- Função para carregar a Key salva
+local function loadKey()
+    if isfile and isfile(KEY_FILE) then
+        local key = readfile(KEY_FILE)
+        if key and key ~= "" then
+            return key
+        end
+    end
+    return nil
+end
+
+-- Função para validar a Key (HTTP)
+local function validateKey(key)
+    local url = VALIDATE_URL .. key
+    local success, response = pcall(function()
+        return game:HttpGet(url)
+    end)
+    if success then
+        if string.lower(response) == "valid" then
+            return true
+        end
+    end
+    return false
+end
+
+-- Verifica se já existe uma Key válida salva
+local savedKey = loadKey()
+if savedKey and validateKey(savedKey) then
+    print("🎉 Key válida carregada automaticamente!")
+    local ok, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kauativor/Gygsilva/refs/heads/main/gpt.txt"))()
+    end)
+    if not ok then
+        warn("⚠️ Erro ao carregar script:", err)
+    end
+    return -- termina o script aqui, não mostra GUI
+end
+
+-- ===========================
+-- CRIAÇÃO DA GUI
+-- ===========================
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KeySystemGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+-- Main Frame
+local MainFrame = Instance.new("ImageLabel")
+MainFrame.Size = UDim2.new(0, 350, 0, 200)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundTransparency = 1
+MainFrame.BorderSizePixel = 0
+MainFrame.Image = "rbxassetid://91458281980507"
+MainFrame.ScaleType = Enum.ScaleType.Crop
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 15)
+UICorner.Parent = MainFrame
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 40)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Key System"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 22
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = MainFrame
+
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 20
+CloseButton.Parent = MainFrame
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.Parent = CloseButton
+
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- Key TextBox
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(0.8, 0, 0, 40)
+KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyBox.PlaceholderText = "Enter Key"
+KeyBox.PlaceholderColor3 = Color3.fromRGB(180, 180, 180)
+KeyBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 18
+KeyBox.ClearTextOnFocus = true
+KeyBox.Text = ""
+KeyBox.Parent = MainFrame
+
+local KeyBoxCorner = Instance.new("UICorner")
+KeyBoxCorner.CornerRadius = UDim.new(0, 10)
+KeyBoxCorner.Parent = KeyBox
+
+-- Get Key Button
+local GetKeyButton = Instance.new("TextButton")
+GetKeyButton.Size = UDim2.new(0.4, 0, 0, 40)
+GetKeyButton.Position = UDim2.new(0.08, 0, 0.7, 0)
+GetKeyButton.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+GetKeyButton.Text = "Get Key"
+GetKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+GetKeyButton.Font = Enum.Font.GothamBold
+GetKeyButton.TextSize = 18
+GetKeyButton.Parent = MainFrame
+
+local GetKeyCorner = Instance.new("UICorner")
+GetKeyCorner.CornerRadius = UDim.new(0, 10)
+GetKeyCorner.Parent = GetKeyButton
+
+-- Verify Button
+local VerifyButton = Instance.new("TextButton")
+VerifyButton.Size = UDim2.new(0.4, 0, 0, 40)
+VerifyButton.Position = UDim2.new(0.52, 0, 0.7, 0)
+VerifyButton.BackgroundColor3 = Color3.fromRGB(34, 139, 34)
+VerifyButton.Text = "Verify"
+VerifyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+VerifyButton.Font = Enum.Font.GothamBold
+VerifyButton.TextSize = 18
+VerifyButton.Parent = MainFrame
+
+local VerifyCorner = Instance.new("UICorner")
+VerifyCorner.CornerRadius = UDim.new(0, 10)
+VerifyCorner.Parent = VerifyButton
+
+-- Copy link function
+local function copyLink()
+    if setclipboard then
+        setclipboard(LINK_TO_COPY)
+        print("🔗 Link copied to clipboard!")
+    else
+        print("⚠️ Cannot copy link on this executor.")
+    end
+end
+
+-- ===========================
+-- ANIMAÇÃO DE ERRO ROBUSTA
+-- ===========================
+local shakeQueue = 0 -- conta quantos shakes estão rodando
+local originalColor = KeyBox.BackgroundColor3
+local originalPos = KeyBox.Position
+
+local function playErrorAnimation()
+    shakeQueue += 1 -- adiciona uma animação à fila
+    KeyBox.BackgroundColor3 = Color3.fromRGB(150, 0, 0) -- muda a cor
+
+    local offset = 10
+    local tweenTime = 0.05
+
+    coroutine.wrap(function()
+        -- Shake left
+        local tween1 = TweenService:Create(KeyBox, TweenInfo.new(tweenTime), {Position = originalPos + UDim2.new(0, -offset, 0, 0)})
+        tween1:Play()
+        tween1.Completed:Wait()
+
+        -- Shake right
+        local tween2 = TweenService:Create(KeyBox, TweenInfo.new(tweenTime), {Position = originalPos + UDim2.new(0, offset, 0, 0)})
+        tween2:Play()
+        tween2.Completed:Wait()
+
+        -- Volta para a posição original
+        local tween3 = TweenService:Create(KeyBox, TweenInfo.new(tweenTime), {Position = originalPos})
+        tween3:Play()
+        tween3.Completed:Wait()
+
+        shakeQueue -= 1
+        if shakeQueue <= 0 then
+            task.delay(0.1, function()
+                KeyBox.BackgroundColor3 = originalColor
+                shakeQueue = 0
+            end)
+        end
+    end)()
+end
+
+-- Get Key Button click
+GetKeyButton.MouseButton1Click:Connect(copyLink)
+
+-- Verify Button click
+VerifyButton.MouseButton1Click:Connect(function()
+    local enteredKey = KeyBox.Text
+    if enteredKey == "" then
+        playErrorAnimation()
+        return
+    end
+
+    if validateKey(enteredKey) then  
+        print("🎉 Key válida! Carregando script...")  
+        saveKey(enteredKey) -- salva localmente  
+        ScreenGui:Destroy()  
+        local ok, err = pcall(function()  
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Kauativor/Gygsilva/refs/heads/main/gpt.txt"))()  
+        end)  
+        if not ok then  
+            warn("⚠️ Erro ao carregar script:", err)  
+        end  
+    else  
+        print("❌ Key inválida")  
+        KeyBox.Text = ""  
+        KeyBox.PlaceholderText = "Invalid Key"  
+        playErrorAnimation()  
+    end
+end)
+
+-- ===========================
+-- DRAG SYSTEM
+-- ===========================
+local dragging, dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+end
+
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+
+        input.Changed:Connect(function()  
+            if input.UserInputState == Enum.UserInputState.End then  
+                dragging = false  
+            end  
+        end)  
+    end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
